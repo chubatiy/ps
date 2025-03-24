@@ -100,8 +100,14 @@ Each acquirer approves or denies a transaction based on the last digit of the ca
 
 ### Run via Docker
 
+#### Standalone 
 ```bash
 docker-compose up --build
+```
+
+#### Environment for local debug
+```bash
+./builder/docker-compose up
 ```
 
 The application will be available at `http://localhost:8080`.
