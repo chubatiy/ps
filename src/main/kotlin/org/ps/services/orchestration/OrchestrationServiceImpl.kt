@@ -1,5 +1,7 @@
 package org.ps.services.orchestration
 
+import lombok.extern.slf4j.Slf4j
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.ps.dto.events.TransactionCompleted
 import org.ps.dto.events.TransactionCreated
 import org.ps.dto.events.TransactionFailed
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service
  * @param paymentWriteService Service responsible for updating the status of payment transactions.
  * @param notificationService Service responsible for sending notifications regarding transaction statuses.
  */
+@Slf4j
 @Service
 class OrchestrationServiceImpl(
     private val acquirerRouteService: AcquirerRouteService,
@@ -40,14 +43,17 @@ class OrchestrationServiceImpl(
      */
     @RabbitListener(queues = [PAYMENT_CREATED_QUEUE])
     override fun receiveCreatedPayment(message: TransactionCreated) {
+        log.info("Received created payment message: $message")
         try {
             val acquirer = acquirerRouteService.routeTransactionById(id = message.id)
             //
+            log.info("Selected acquirer: ${acquirer.id()}")
             paymentProcessService.processPayment(
                 id = message.id,
                 acquirer = acquirer
             )
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
+            log.error("Error processing payment: ${e.message}")
             notificationService.notify(
                 id = message.id,
                 status = TransactionStatus.FAILED,
