@@ -38,6 +38,10 @@ Each acquirer approves or denies a transaction based on the last digit of the ca
 
 ---
 
+## 📘 API Documentation
+
+Swagger UI is available at: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
 ## 📡 API Endpoints
 
 ### `POST /api/payments`
